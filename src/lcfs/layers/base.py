@@ -6,7 +6,7 @@ class BaseCache:
     Instead, they should inherit one of the strategy based subclasses.
     '''
 
-    def __init__(self, config):
+    def __init__(self, config = []):
         self.config = config
 
 class FullCache(BaseCache):
