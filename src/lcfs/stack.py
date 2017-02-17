@@ -1,4 +1,4 @@
-from .layers.base import BaseCache as LayerType
+from .layers.base import CacheLayer
 
 class LayerStack:
     '''
@@ -39,7 +39,7 @@ class LayerGroup:
 
     def add(self, layer):
         '''Add a new layer to the group'''
-        assert isinstance(layer, LayerType)
+        assert isinstance(layer, CacheLayer)
         assert layer not in self._layers
         self._layers.append(layer)
         return self
