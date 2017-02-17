@@ -1,3 +1,5 @@
+from .layers.base import BaseCache as LayerType
+
 class LayerStack:
     '''
     A stack of one or more `LayerGroup`s that a lcfs filesystem maps to.
@@ -10,7 +12,16 @@ class LayerStack:
     Blocks will be written to every group in a stack, and read from the first
     group that has the requested block.
     '''
-    pass
+
+    def __init__(self):
+        self._groups = []
+
+    def add(self, group):
+        '''Add a new group to the stack'''
+        assert isinstance(group, LayerGroup)
+        assert group not in self._groups
+        self._groups.append(group)
+        return self
 
 class LayerGroup:
     '''
@@ -22,4 +33,13 @@ class LayerGroup:
     layer in a group, in which case they will be handled by one or more other
     groups in the stack.
     '''
-    pass
+
+    def __init__(self):
+        self._layers = []
+
+    def add(self, layer):
+        '''Add a new layer to the group'''
+        assert isinstance(layer, LayerType)
+        assert layer not in self._layers
+        self._layers.append(layer)
+        return self
