@@ -1,4 +1,4 @@
-from .layers.base import CacheLayer, FullCacheLayer
+from .layers.base import BaseLayer, BackingLayerType
 
 class LayerStack:
     '''
@@ -9,10 +9,7 @@ class LayerStack:
     multiple caching layers to implement multiple caching strategies at each
     capacity/latency level.
 
-    A stack is only valid if the stack will cache all data sent to it. As such,
-    the bottom caching layer in the entire stack must be a `FullCacheLayer`.
-
-    Blocks will be written to every group in a stack, and read from the first
+    Blocks will be sent to every group in a stack, and read from the first
     group that has the requested block.
     '''
 
@@ -31,9 +28,10 @@ class LayerStack:
         Check if this stack is valid.
 
         A stack is only valid if it contains at least one group, and if the
-        bottom caching layer in the entire stack is a `FullCacheLayer`.
+        bottom caching layer in the entire stack has at least one layer that is
+        a `BackingLayerType`.
         '''
-        return len(self._groups) and not self._groups[-1].isPartial()
+        return len(self._groups) and self._groups[-1].isBacking()
 
 class LayerGroup:
     '''
@@ -43,7 +41,7 @@ class LayerGroup:
     based on each layer's policies. Block reads are sent to the first layer in
     a group that has the requested block. Reads and writes may not match any
     layer in a group, in which case they will be handled by one or more other
-    groups in the stack.
+    groups in a properly configured stack.
     '''
 
     def __init__(self):
@@ -51,11 +49,13 @@ class LayerGroup:
 
     def add(self, layer):
         '''Add a new layer to the group.'''
-        assert isinstance(layer, CacheLayer)
+        assert isinstance(layer, BaseLayer)
         assert layer not in self._layers
         self._layers.append(layer)
         return self
 
-    def isPartial(self):
-        '''Check if this group has a `FullCacheLayer` as the bottom layer.'''
-        return not len(self._layers) or not isinstance(self._layers[-1], FullCacheLayer)
+    def isBacking(self):
+        '''
+        Check if this group has a `BackingLayerType` layer as one of the layers.
+        '''
+        return any(isinstance(layer, BackingLayerType) for layer in self._layers)
