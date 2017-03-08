@@ -5,24 +5,23 @@ sys.path[1:1] = map(os.path.abspath, [os.path.join(srcdir, x) for x in [
 		'../lib/fusepy'
 	]])
 
-import logging
-import lcfs.stack
-from lcfs.layers.base import BaseLayer, BackingLayerType, FullDataStrategy
-from lcfs.fuseops import FuseOps
-from fuse import FUSE
+import lcfs
+from lcfs.stack import LayerStack, LayerGroup
+from lcfs.layers.dummy import DummyBackingLayer
 from sys import argv
+import logging
 
-class MyLayer(BaseLayer, BackingLayerType, FullDataStrategy):
-	pass
+logging.basicConfig(level=logging.DEBUG)
 
-logging.basicConfig(level=logging.NOTSET)
+args = dict([arg.split('=', 1) if '=' in arg else [arg, True] for arg in argv[2:]])
 
-cache = lcfs.stack.LayerStack()
-cache.add(
-		lcfs.stack.LayerGroup().add(
-				MyLayer()
-			)
+stack = LayerStack()
+stack.add(
+		LayerGroup().add(DummyBackingLayer())
 	)
-logging.debug("Valid: {}".format(cache.valid()))
 
-FUSE(FuseOps(), argv[1], fsname='lcfs', **dict([arg.split('=', 1) if '=' in arg else [arg, True] for arg in argv[2:]]))
+fs = lcfs.LCFS(stack)
+fs.setMount(argv[1])
+fs.setArgs(args)
+
+fs.run()
