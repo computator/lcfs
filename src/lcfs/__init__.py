@@ -1,4 +1,5 @@
 from lcfs.stack import LayerStack
+from lcfs.operations import OpMapper
 from lcfs.fuseops import FuseOps
 from fuse import FUSE
 import logging
@@ -17,7 +18,8 @@ class LCFS:
 		self.stack = stack
 		self.mp = mountpoint
 		log.info("Mountpoint set to %s", mountpoint)
-		self.op_handler = FuseOps()
+		self.op_mapper = OpMapper(self.mp, self.stack)
+		self.fuse_op_handler = FuseOps(self.op_mapper)
 
 	def setArgs(self, fuse_args):
 		'''Set the fuse arguments for the filesystem.'''
@@ -31,4 +33,4 @@ class LCFS:
 		This method will not return until the filesystem is unmounted, either
 		normally or due to an error.
 		'''
-		return FUSE(self.op_handler, self.mp, fsname="lcfs", **self.fuse_args)
+		return FUSE(self.fuse_op_handler, self.mp, fsname="lcfs", **self.fuse_args)
