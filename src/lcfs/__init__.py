@@ -8,19 +8,16 @@ log = logging.getLogger(__name__)
 class LCFS:
 	'''An instance of a lcfs filesystem.'''
 
-	def __init__(self, stack):
+	def __init__(self, mountpoint, stack):
 		if not isinstance(stack, LayerStack):
 			raise TypeError("stack is not an instance of LayerStack")
 		if not stack.valid():
 			raise Exception("Invalid LayerStack")
 		log.debug("The specified LayerStack is valid")
 		self.stack = stack
+		self.mp = mountpoint
+		log.info("Mountpoint set to %s", mountpoint)
 		self.op_handler = FuseOps()
-
-	def setMount(self, mp):
-		'''Set the directory that the lcfs filesystem will be mounted on.'''
-		log.info("Mountpoint set to %s", mp)
-		self.mp = mp
 
 	def setArgs(self, fuse_args):
 		'''Set the fuse arguments for the filesystem.'''

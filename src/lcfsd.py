@@ -20,8 +20,7 @@ stack.add(
 		LayerGroup().add(DummyBackingLayer())
 	)
 
-fs = lcfs.LCFS(stack)
-fs.setMount(argv[1])
+fs = lcfs.LCFS(argv[1], stack)
 fs.setArgs(args)
 
 fs.run()
