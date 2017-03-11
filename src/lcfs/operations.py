@@ -15,3 +15,6 @@ class OpMapper:
 		if path != '/':
 			raise OpError(errno.ENOENT)
 		return dict(st_mode=stat.S_IFDIR|0o755, st_nlink=2)
+
+	def readdir(self, path, fh):
+		return ['.', '..']

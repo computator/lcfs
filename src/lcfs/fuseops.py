@@ -17,3 +17,7 @@ class FuseOps(LoggingMixIn, Operations):
 	@map_err
 	def getattr(self, path, fh=None):
 		return self.op_mapper.getattr(path, fh)
+
+	@map_err
+	def readdir(self, path, fh):
+		return self.op_mapper.readdir(path, fh)
