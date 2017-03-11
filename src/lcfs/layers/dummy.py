@@ -1,7 +1,7 @@
 from lcfs.layers.base import BaseLayer, BackingLayerType, CacheLayerType, FullDataStrategy
 
 class DummyBackingLayer(BaseLayer, BackingLayerType, FullDataStrategy):
-	pass
+    pass
 
 class DummyCachingLayer(BaseLayer, CacheLayerType, FullDataStrategy):
-	pass
+    pass
