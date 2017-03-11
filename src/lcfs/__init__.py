@@ -18,7 +18,7 @@ class LCFS:
 		self.stack = stack
 		self.mp = mountpoint
 		log.info("Mountpoint set to %s", mountpoint)
-		self.op_mapper = OpMapper(self.mp, self.stack)
+		self.op_mapper = OpMapper(self.stack)
 		self.fuse_op_handler = FuseOps(self.op_mapper)
 
 	def setArgs(self, fuse_args):
